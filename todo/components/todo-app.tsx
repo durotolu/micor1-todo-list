@@ -119,7 +119,7 @@ export default function TodoApp() {
           >
             <TabsList className="grid grid-cols-1 md:grid-cols-4 mb-4 w-full h-full">
               {categories.map((category) => (
-                <TabsTrigger key={category} value={category} className="capitalize cursor-pointer">
+                <TabsTrigger key={category} value={category} className=" hover:opacity-75 capitalize cursor-pointer">
                   {category}
                 </TabsTrigger>
               ))}
