@@ -57,8 +57,8 @@ export default function TaskForm({ onAddTask, activeCategory }: TaskFormProps) {
               <FormMessage className="text-xs mt-1" />
             </FormItem>
           )}
-        /> 
-        <Badge variant="outline">{activeCategory}</Badge>
+        />
+        <Badge className="h-9" variant="outline">{activeCategory}</Badge>
         <Button type="submit">
           <Plus className="h-4 w-4 mr-2" />
           Add
