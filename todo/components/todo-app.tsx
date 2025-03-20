@@ -97,7 +97,7 @@ export default function TodoApp() {
   const filteredTasks = activeCategory === "all" ? tasks : tasks.filter((task) => task.category === activeCategory)
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto max-w-4xl">
       <Card className="shadow-lg">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-2xl font-bold">Todo List Manager</CardTitle>
@@ -112,13 +112,12 @@ export default function TodoApp() {
         </CardHeader>
         <CardContent>
           <TaskForm onAddTask={addTask} activeCategory={activeCategory} />
-
           <Tabs
             defaultValue="all"
             value={activeCategory}
             onValueChange={(value) => setActiveCategory(value as Category)}
           >
-            <TabsList className="grid grid-cols-4 mb-4 w-full">
+            <TabsList className="grid grid-cols-1 md:grid-cols-4 mb-4 w-full h-full">
               {categories.map((category) => (
                 <TabsTrigger key={category} value={category} className="capitalize cursor-pointer">
                   {category}

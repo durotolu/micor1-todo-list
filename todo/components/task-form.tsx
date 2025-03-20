@@ -45,20 +45,22 @@ export default function TaskForm({ onAddTask, activeCategory }: TaskFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2 mb-6">
-        <FormField
-          control={form.control}
-          name="taskText"
-          render={({ field }) => (
-            <FormItem className="flex-1">
-              <FormControl>
-                <Input placeholder="Add a new task..." {...field} aria-label="New task text" />
-              </FormControl>
-              <FormMessage className="text-xs mt-1" />
-            </FormItem>
-          )}
-        />
-        <Badge className="h-9" variant="outline">{activeCategory}</Badge>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2 mb-6 flex-col md:flex-row w-full">
+        <div className="flex w-full">
+          <FormField
+            control={form.control}
+            name="taskText"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormControl>
+                  <Input placeholder="Add a new task..." {...field} aria-label="New task text" />
+                </FormControl>
+                <FormMessage className="text-xs mt-1" />
+              </FormItem>
+            )}
+          />
+          <Badge className="h-9" variant="outline">{activeCategory}</Badge>
+        </div>
         <Button type="submit">
           <Plus className="h-4 w-4 mr-2" />
           Add
