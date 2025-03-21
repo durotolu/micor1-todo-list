@@ -54,7 +54,7 @@ export default function TaskForm({ onAddTask, activeCategory, setActiveCategory 
             render={({ field }) => (
               <FormItem className="flex-1">
                 <FormControl>
-                  <Input disabled={activeCategory === "all"} placeholder="Add a new task..." {...field} aria-label="New task text" />
+                  <Input disabled={activeCategory === "all"} placeholder="Add a new task..." {...field} aria-label="New task text" className="disabled:bg-muted disabled:cursor-not-allowed" />
                 </FormControl>
                 <FormMessage className="text-xs mt-1" />
               </FormItem>
@@ -66,14 +66,14 @@ export default function TaskForm({ onAddTask, activeCategory, setActiveCategory 
             </SelectTrigger>
             <SelectContent>
               {categories.map((category) => (
-                <SelectItem key={category} value={category}>
-                  {category === "all" ? '' : category}
+                <SelectItem key={category} value={category} disabled={category === "all"} className={category === "all" ? "text-muted-foreground" : ""}>
+                  {category === "all" ? "" : category}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-        <Button type="submit">
+        <Button type="submit" disabled={activeCategory === "all"}>
           <Plus className="h-4 w-4 mr-2" />
           Add
         </Button>
