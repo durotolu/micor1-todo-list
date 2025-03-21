@@ -59,7 +59,7 @@ export default function TaskItem({ task, onDelete, onToggleComplete, onStartEdit
               </label>
             )
           }
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 pr-1">
             <Badge className={`${categoryColor} text-white capitalize text-xs`}>{task.category}</Badge>
             {task.isEditing ? (
               <Popover>
