@@ -50,7 +50,7 @@ export default function TaskItem({ task, onDelete, onToggleComplete, onStartEdit
   return (
     <>
       <style>{shakeAnimation}</style>
-      <li className="flex items-center justify-between p-3 rounded-md border bg-card">
+      <li className={`flex items-center justify-between p-3 rounded-md border bg-card ${ task.isEditing ? " max-md:flex-col" : ""}`}>
       <div className="flex items-center gap-3 flex-1">
         <Checkbox
           id={`task-${task.id}`}
@@ -90,7 +90,7 @@ export default function TaskItem({ task, onDelete, onToggleComplete, onStartEdit
               </label>
             )
           }
-          <div className="flex items-center gap-2 pr-1">
+          <div className="flex items-center gap-2">
             <Badge className={`${categoryColor} text-white capitalize text-xs`}>{task.category}</Badge>
             {task.isEditing ? (
               <Popover>
@@ -125,7 +125,7 @@ export default function TaskItem({ task, onDelete, onToggleComplete, onStartEdit
           </div>
         </div>
       </div>
-      <div className="flex gap-1">
+      <div className={`flex gap-1 ${ task.isEditing ? " max-md:self-end" : ""}`}>
         {task.isEditing ? (
           <>
             <Button
