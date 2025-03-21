@@ -17,6 +17,9 @@ const taskFormSchema = z.object({
     .min(1, { message: "Task cannot be empty" })
     .max(100, { message: "Task is too long (max 100 characters)" })
     .trim(),
+  category: z
+    .string()
+    .refine((val) => val !== "all", { message: "Please select a category" })
 })
 
 type TaskFormValues = z.infer<typeof taskFormSchema>
@@ -33,6 +36,7 @@ export default function TaskForm({ onAddTask, activeCategory, setActiveCategory 
     resolver: zodResolver(taskFormSchema),
     defaultValues: {
       taskText: "",
+      category: activeCategory,
     },
   })
 
@@ -40,13 +44,21 @@ export default function TaskForm({ onAddTask, activeCategory, setActiveCategory 
 
   // Handle form submission
   function onSubmit(data: TaskFormValues) {
+    if (activeCategory === "all") {
+      form.setError("category", { message: "Please select a category" })
+      return
+    }
     onAddTask(data.taskText)
     form.reset()
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2 mb-6 flex-col md:flex-row w-full">
+      <form onClick={() => {
+          if (activeCategory === "all") {
+            form.setError("category", { message: "Please select a category" })
+          }
+        }} onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2 mb-6 flex-col md:flex-row w-full">
         <div className="flex w-full gap-2">
           <FormField
             control={form.control}
@@ -60,18 +72,41 @@ export default function TaskForm({ onAddTask, activeCategory, setActiveCategory 
               </FormItem>
             )}
           />
-          <Select value={activeCategory} onValueChange={(value) => setActiveCategory(value as Category)}> 
-            <SelectTrigger className="w-[130px]">
-              <SelectValue placeholder="Select category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((category) => (
-                <SelectItem key={category} value={category} disabled={category === "all"} className={category === "all" ? "text-muted-foreground" : ""}>
-                  {category === "all" ? "" : category}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem>
+                <Select
+                  value={activeCategory}
+                  onValueChange={(value) => {
+                    setActiveCategory(value as Category);
+                    field.onChange(value);
+                    if (value !== "all") {
+                      form.clearErrors("category");
+                    }
+                  }}
+                >
+                  <SelectTrigger className="w-[130px]">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem
+                        key={category}
+                        value={category}
+                        disabled={category === "all"}
+                        className={category === "all" ? "text-muted-foreground" : ""}
+                      >
+                        {category === "all" ? "" : category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage className="text-xs mt-1" />
+              </FormItem>
+            )}
+          />
         </div>
         <Button type="submit" disabled={activeCategory === "all"}>
           <Plus className="h-4 w-4 mr-2" />
