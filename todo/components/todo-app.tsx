@@ -93,8 +93,6 @@ export default function TodoApp() {
   }
 
   const filteredTasks = tasks.filter((task) => activeCategory === "all" ? true : task.category === activeCategory)
-  console.log('filteredTasks', activeCategory)
-  console.log('filteredTasks', filteredTasks)
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -112,7 +110,6 @@ export default function TodoApp() {
         </CardHeader>
         <CardContent>
           <TaskForm onAddTask={addTask} activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
-          {activeCategory}
           <Tabs
             defaultValue="all"
             value={activeCategory}
@@ -127,7 +124,7 @@ export default function TodoApp() {
             </TabsList>
 
             {categories.map((category) => (
-              <TabsContent key={category} value={category}>d{category}e
+              <TabsContent key={category} value={category}>
                 <TaskList tasks={filteredTasks} onDelete={confirmDeleteTask} onToggleComplete={toggleTaskCompletion} />
               </TabsContent>
             ))}
