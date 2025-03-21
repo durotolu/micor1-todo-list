@@ -99,10 +99,10 @@ export default function TodoApp() {
     setTasks(tasks.map((task) => (task.id === id ? { ...task, isEditing: true } : { ...task, isEditing: false })))
   }
 
-  const saveEditedTask = (id: string, newText: string, newDueDate?: Date) => {
+  const saveEditedTask = (id: string, newText: string, newDueDate?: Date, edited: boolean = true) => {
     if (newText.trim()) {
       setTasks(tasks.map((task) => task.id === id ? { ...task, text: newText.trim(), dueDate: newDueDate, isEditing: false } : task))
-      toast("Task updated")
+      if (edited) toast("Task updated");
     }
   }
 

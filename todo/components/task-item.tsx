@@ -17,7 +17,7 @@ interface TaskItemProps {
   onDelete: (id: string) => void
   onToggleComplete: (id: string) => void
   onStartEdit: (id: string) => void
-  onSaveEdit: (id: string, newText: string, newDueDate?: Date) => void
+  onSaveEdit: (id: string, newText: string, newDueDate?: Date, edited?: boolean) => void
 }
 
 const shakeAnimation = `
@@ -148,7 +148,7 @@ export default function TaskItem({ task, onDelete, onToggleComplete, onStartEdit
               onClick={() => {
                 setEditText(task.text)
                 setEditDueDate(task.dueDate)
-                onSaveEdit(task.id, task.text, task.dueDate)
+                onSaveEdit(task.id, task.text, task.dueDate, false)
               }}
               aria-label="Cancel editing"
             >
