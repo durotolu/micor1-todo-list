@@ -5,15 +5,12 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns"
 import { CalendarIcon, Pencil, Save, Trash2, X } from "lucide-react"
 import { useState } from "react"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
+import { toast } from "sonner"
 
 interface TaskItemProps {
   task: Task
@@ -23,21 +20,25 @@ interface TaskItemProps {
   onSaveEdit: (id: string, newText: string, newDueDate?: Date) => void
 }
 
-const editTaskSchema = z.object({
-  text: z.string().min(1, { message: "Task text cannot be empty" })
-})
+const shakeAnimation = `
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
 
-type EditTaskFormValues = z.infer<typeof editTaskSchema>
+  .shake {
+    animation: shake 0.3s ease-in-out;
+  }
+
+  .border-red-500 {
+    border-color: rgb(239 68 68);
+  }
+`
 
 export default function TaskItem({ task, onDelete, onToggleComplete, onStartEdit, onSaveEdit }: TaskItemProps) {
+  const [editText, setEditText] = useState(task.text)
   const [editDueDate, setEditDueDate] = useState<Date | undefined>(task.dueDate)
-  
-  const form = useForm<EditTaskFormValues>({
-    resolver: zodResolver(editTaskSchema),
-    defaultValues: {
-      text: task.text
-    }
-  })
   const categoryColors = {
     work: "bg-rose-500",
     personal: "bg-emerald-500",
@@ -47,7 +48,9 @@ export default function TaskItem({ task, onDelete, onToggleComplete, onStartEdit
   const categoryColor = categoryColors[task.category as keyof typeof categoryColors] || "bg-slate-500"
 
   return (
-    <li className="flex items-center justify-between p-3 rounded-md border bg-card">
+    <>
+      <style>{shakeAnimation}</style>
+      <li className="flex items-center justify-between p-3 rounded-md border bg-card">
       <div className="flex items-center gap-3 flex-1">
         <Checkbox
           id={`task-${task.id}`}
@@ -58,27 +61,26 @@ export default function TaskItem({ task, onDelete, onToggleComplete, onStartEdit
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1">
           {
             task.isEditing ? (
-              <Form {...form}>
-                <form className="w-full" onSubmit={form.handleSubmit((data) => onSaveEdit(task.id, data.text, editDueDate))}>
-                  <FormField
-                    control={form.control}
-                    name="text"
-                    render={({ field }) => (
-                      <FormItem className="space-y-0">
-                        <FormControl>
-                          <Input
-                            {...field}
-                            onKeyDown={(e) => e.key === "Enter" && form.handleSubmit((data) => onSaveEdit(task.id, data.text, editDueDate))()}
-                            className="flex-1"
-                            autoFocus
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                </form>
-              </Form>
+              <Input
+                type="text"
+                value={editText}
+                onChange={(e) => setEditText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    if (!editText.trim()) {
+                      toast.error("Task text cannot be empty")
+                      e.currentTarget.classList.add("shake", "border-red-500")
+                      setTimeout(() => {
+                        e.currentTarget.classList.remove("shake", "border-red-500")
+                      }, 500)
+                      return
+                    }
+                    onSaveEdit(task.id, editText)
+                  }
+                }}
+                className="flex-1"
+                autoFocus
+              />
             ) : (
               <label
                 htmlFor={`task-${task.id}`}
@@ -126,14 +128,25 @@ export default function TaskItem({ task, onDelete, onToggleComplete, onStartEdit
       <div className="flex gap-1">
         {task.isEditing ? (
           <>
-            <Button variant="ghost" size="icon" onClick={form.handleSubmit((data) => onSaveEdit(task.id, data.text, editDueDate))} aria-label="Save changes">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                if (!editText.trim()) {
+                  toast.error("Task text cannot be empty")
+                  return
+                }
+                onSaveEdit(task.id, editText, editDueDate)
+              }}
+              aria-label="Save changes"
+            >
               <Save className="h-4 w-4 text-green-500" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => {
-                form.reset({ text: task.text })
+                setEditText(task.text)
                 setEditDueDate(task.dueDate)
                 onSaveEdit(task.id, task.text, task.dueDate)
               }}
@@ -152,6 +165,7 @@ export default function TaskItem({ task, onDelete, onToggleComplete, onStartEdit
         </Button>
       </div>
     </li>
+    </>
   )
 }
 

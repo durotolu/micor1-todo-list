@@ -103,8 +103,6 @@ export default function TodoApp() {
     if (newText.trim()) {
       setTasks(tasks.map((task) => task.id === id ? { ...task, text: newText.trim(), dueDate: newDueDate, isEditing: false } : task))
       toast("Task updated")
-    } else {
-      toast.warning("Task text cannot be empty")
     }
   }
 
