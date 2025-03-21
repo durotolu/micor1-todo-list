@@ -150,9 +150,10 @@ export default function TaskForm({ onAddTask, activeCategory, setActiveCategory 
                         key={category}
                         value={category}
                         disabled={category === "all"}
+                        // selected={category === "all"}
                         className={category === "all" ? "text-muted-foreground" : ""}
                       >
-                        {category === "all" ? "" : category}
+                        {category === "all" ? "Select category" : category}
                       </SelectItem>
                     ))}
                   </SelectContent>
