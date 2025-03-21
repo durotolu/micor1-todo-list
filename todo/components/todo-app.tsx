@@ -15,6 +15,7 @@ export type Task = {
   text: string
   completed: boolean
   category: string
+  isEditing?: boolean
 }
 
 export type Category = "all" | "work" | "personal" | "shopping"
@@ -92,6 +93,17 @@ export default function TodoApp() {
     setTasks(tasks.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task)))
   }
 
+  const startEditTask = (id: string) => {
+    setTasks(tasks.map((task) => (task.id === id ? { ...task, isEditing: true } : { ...task, isEditing: false })))
+  }
+
+  const saveEditedTask = (id: string, newText: string) => {
+    if (newText.trim()) {
+      setTasks(tasks.map((task) => task.id === id ? { ...task, text: newText.trim(), isEditing: false } : task))
+      toast("Task updated")
+    }
+  }
+
   const filteredTasks = tasks.filter((task) => activeCategory === "all" ? true : task.category === activeCategory)
 
   return (
@@ -125,7 +137,13 @@ export default function TodoApp() {
 
             {categories.map((category) => (
               <TabsContent key={category} value={category}>
-                <TaskList tasks={filteredTasks} onDelete={confirmDeleteTask} onToggleComplete={toggleTaskCompletion} />
+                <TaskList
+                  tasks={filteredTasks}
+                  onDelete={confirmDeleteTask}
+                  onToggleComplete={toggleTaskCompletion}
+                  onStartEdit={startEditTask}
+                  onSaveEdit={saveEditedTask}
+                />
               </TabsContent>
             ))}
           </Tabs>
