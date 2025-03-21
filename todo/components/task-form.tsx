@@ -1,10 +1,13 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Plus } from "lucide-react"
+import { format } from "date-fns"
+import { CalendarIcon, Plus } from "lucide-react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import type { Category } from "./todo-app"
@@ -19,13 +22,14 @@ const taskFormSchema = z.object({
     .trim(),
   category: z
     .string()
-    .refine((val) => val !== "all", { message: "Please select a category" })
+    .refine((val) => val !== "all", { message: "Please select a category" }),
+  dueDate: z.date().optional()
 })
 
 type TaskFormValues = z.infer<typeof taskFormSchema>
 
 interface TaskFormProps {
-  onAddTask: (text: string) => void
+  onAddTask: (text: string, dueDate?: Date) => void
   activeCategory: Category
   setActiveCategory: (category: Category) => void
 }
@@ -37,6 +41,7 @@ export default function TaskForm({ onAddTask, activeCategory, setActiveCategory 
     defaultValues: {
       taskText: "",
       category: activeCategory,
+      dueDate: undefined,
     },
   })
 
@@ -48,7 +53,7 @@ export default function TaskForm({ onAddTask, activeCategory, setActiveCategory 
       form.setError("category", { message: "Please select a category" })
       return
     }
-    onAddTask(data.taskText)
+    onAddTask(data.taskText, data.dueDate)
     form.reset()
   }
 
@@ -60,6 +65,45 @@ export default function TaskForm({ onAddTask, activeCategory, setActiveCategory 
           }
         }} onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2 mb-6 flex-col md:flex-row w-full">
         <div className="flex w-full gap-2">
+          <FormField
+            control={form.control}
+            name="dueDate"
+            render={({ field }) => (
+              <FormItem className="flex-none">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={"w-[200px] pl-3 text-left font-normal"}
+                        disabled={activeCategory === "all"}
+                      >
+                        {field.value ? (
+                          format(field.value, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) =>
+                        date < new Date(new Date().setHours(0, 0, 0, 0))
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="taskText"

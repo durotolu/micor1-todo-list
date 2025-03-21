@@ -5,7 +5,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
-import { Pencil, Save, Trash2, X } from "lucide-react"
+import { format } from "date-fns"
+import { CalendarIcon, Pencil, Save, Trash2, X } from "lucide-react"
 import { useState } from "react"
 
 interface TaskItemProps {
@@ -55,7 +56,15 @@ export default function TaskItem({ task, onDelete, onToggleComplete, onStartEdit
               </label>
             )
           }
-          <Badge className={`${categoryColor} text-white capitalize text-xs`}>{task.category}</Badge>
+          <div className="flex items-center gap-2">
+            <Badge className={`${categoryColor} text-white capitalize text-xs`}>{task.category}</Badge>
+            {task.dueDate && (
+              <div className="flex items-center text-xs text-muted-foreground gap-1">
+                <CalendarIcon className="h-3 w-3" />
+                {format(task.dueDate, "PPP")}
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <div className="flex gap-1">

@@ -16,6 +16,7 @@ export type Task = {
   completed: boolean
   category: string
   isEditing?: boolean
+  dueDate?: Date
 }
 
 export type Category = "all" | "work" | "personal" | "shopping"
@@ -57,12 +58,13 @@ export default function TodoApp() {
     }
   }, [isDarkMode])
 
-  const addTask = (text: string) => {
+  const addTask = (text: string, dueDate?: Date) => {
     const task: Task = {
       id: Date.now().toString(),
       text,
       completed: false,
       category: activeCategory,
+      dueDate
     }
 
     setTasks([...tasks, task])
