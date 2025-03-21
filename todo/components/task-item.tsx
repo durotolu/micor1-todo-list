@@ -3,8 +3,10 @@
 import type { Task } from "@/components/todo-app"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
 import { CalendarIcon, Pencil, Save, Trash2, X } from "lucide-react"
 import { useState } from "react"
@@ -14,11 +16,12 @@ interface TaskItemProps {
   onDelete: (id: string) => void
   onToggleComplete: (id: string) => void
   onStartEdit: (id: string) => void
-  onSaveEdit: (id: string, newText: string) => void
+  onSaveEdit: (id: string, newText: string, newDueDate?: Date) => void
 }
 
 export default function TaskItem({ task, onDelete, onToggleComplete, onStartEdit, onSaveEdit }: TaskItemProps) {
   const [editText, setEditText] = useState(task.text)
+  const [editDueDate, setEditDueDate] = useState<Date | undefined>(task.dueDate)
   const categoryColors = {
     work: "bg-rose-500",
     personal: "bg-emerald-500",
@@ -58,19 +61,43 @@ export default function TaskItem({ task, onDelete, onToggleComplete, onStartEdit
           }
           <div className="flex items-center gap-2">
             <Badge className={`${categoryColor} text-white capitalize text-xs`}>{task.category}</Badge>
-            {task.dueDate && (
+            {task.isEditing ? (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="h-8 w-[200px] pl-3 text-left font-normal">
+                    {editDueDate ? (
+                      format(editDueDate, "PPP")
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={editDueDate}
+                    onSelect={setEditDueDate}
+                    disabled={(date) =>
+                      date < new Date(new Date().setHours(0, 0, 0, 0))
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            ) : task.dueDate ? (
               <div className="flex items-center text-xs text-muted-foreground gap-1">
                 <CalendarIcon className="h-3 w-3" />
                 {format(task.dueDate, "PPP")}
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
       <div className="flex gap-1">
         {task.isEditing ? (
           <>
-            <Button variant="ghost" size="icon" onClick={() => onSaveEdit(task.id, editText)} aria-label="Save changes">
+            <Button variant="ghost" size="icon" onClick={() => onSaveEdit(task.id, editText, editDueDate)} aria-label="Save changes">
               <Save className="h-4 w-4 text-green-500" />
             </Button>
             <Button
@@ -78,7 +105,8 @@ export default function TaskItem({ task, onDelete, onToggleComplete, onStartEdit
               size="icon"
               onClick={() => {
                 setEditText(task.text)
-                onSaveEdit(task.id, task.text)
+                setEditDueDate(task.dueDate)
+                onSaveEdit(task.id, task.text, task.dueDate)
               }}
               aria-label="Cancel editing"
             >
