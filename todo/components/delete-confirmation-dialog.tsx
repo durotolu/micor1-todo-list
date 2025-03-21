@@ -1,6 +1,5 @@
 "use client"
 
-import { X } from "lucide-react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { X } from "lucide-react"
 import type { Task } from "./todo-app"
 
 interface DeleteConfirmationDialogProps {
@@ -56,7 +56,7 @@ export default function DeleteConfirmationDialog({
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="bg-destructive text-white hover:bg-destructive/90"
           >
             Delete
           </AlertDialogAction>

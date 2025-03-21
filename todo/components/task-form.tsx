@@ -8,6 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns"
 import { CalendarIcon, Plus } from "lucide-react"
+import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import type { Category } from "./todo-app"
@@ -47,6 +48,11 @@ export default function TaskForm({ onAddTask, activeCategory, setActiveCategory 
 
   const categories = ["personal", "work", "shopping", "all"]
 
+  // Update form default values when activeCategory changes
+  useEffect(() => {
+    form.setValue("category", activeCategory)
+  }, [activeCategory, form])
+
   // Handle form submission
   function onSubmit(data: TaskFormValues) {
     if (activeCategory === "all") {
@@ -54,7 +60,11 @@ export default function TaskForm({ onAddTask, activeCategory, setActiveCategory 
       return
     }
     onAddTask(data.taskText, data.dueDate)
-    form.reset()
+    form.reset({
+      taskText: "",
+      category: activeCategory,
+      dueDate: undefined
+    })
   }
 
   return (

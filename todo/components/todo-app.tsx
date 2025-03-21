@@ -21,7 +21,7 @@ export type Task = {
 
 export type Category = "all" | "work" | "personal" | "shopping"
 
-const categories: Category[] = ["all", "work", "personal", "shopping"]
+const categories: Category[] = ["all", "personal", "work", "shopping"]
 
 export default function TodoApp() {
   const [tasks, setTasks] = useState<Task[]>([])
