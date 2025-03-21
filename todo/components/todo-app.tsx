@@ -1,14 +1,14 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Moon, Sun } from "lucide-react"
+import DeleteConfirmationDialog from "@/components/delete-confirmation-dialog"
+import TaskList from "@/components/task-list"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Moon, Sun } from "lucide-react"
+import { useEffect, useState } from "react"
 import { toast } from "sonner"
-import TaskList from "@/components/task-list"
-import TaskForm from "@/components/task-form"
-import DeleteConfirmationDialog from "@/components/delete-confirmation-dialog"
+import TaskForm from "./task-form"
 
 export type Task = {
   id: string
@@ -57,18 +57,16 @@ export default function TodoApp() {
   }, [isDarkMode])
 
   const addTask = (text: string) => {
-    const category = activeCategory === "all" ? "personal" : activeCategory
-
     const task: Task = {
       id: Date.now().toString(),
       text,
       completed: false,
-      category,
+      category: activeCategory,
     }
 
     setTasks([...tasks, task])
 
-    toast(`"${text}" added to ${category}`,)
+    toast(`"${text}" added to ${activeCategory}`,)
   }
 
   const confirmDeleteTask = (id: string) => {
@@ -94,7 +92,9 @@ export default function TodoApp() {
     setTasks(tasks.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task)))
   }
 
-  const filteredTasks = activeCategory === "all" ? tasks : tasks.filter((task) => task.category === activeCategory)
+  const filteredTasks = tasks.filter((task) => activeCategory === "all" ? true : task.category === activeCategory)
+  console.log('filteredTasks', activeCategory)
+  console.log('filteredTasks', filteredTasks)
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -111,7 +111,8 @@ export default function TodoApp() {
           </Button>
         </CardHeader>
         <CardContent>
-          <TaskForm onAddTask={addTask} activeCategory={activeCategory} />
+          <TaskForm onAddTask={addTask} activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
+          {activeCategory}
           <Tabs
             defaultValue="all"
             value={activeCategory}
@@ -126,7 +127,7 @@ export default function TodoApp() {
             </TabsList>
 
             {categories.map((category) => (
-              <TabsContent key={category} value={category}>
+              <TabsContent key={category} value={category}>d{category}e
                 <TaskList tasks={filteredTasks} onDelete={confirmDeleteTask} onToggleComplete={toggleTaskCompletion} />
               </TabsContent>
             ))}

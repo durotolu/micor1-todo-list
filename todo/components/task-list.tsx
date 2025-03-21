@@ -1,5 +1,5 @@
-import type { Task } from "@/components/todo-app"
 import TaskItem from "@/components/task-item"
+import type { Task } from "@/components/todo-app"
 
 interface TaskListProps {
   tasks: Task[]
