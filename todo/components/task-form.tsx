@@ -74,14 +74,14 @@ export default function TaskForm({ onAddTask, activeCategory, setActiveCategory 
             form.setError("category", { message: "Please select a category" })
           }
         }} onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2 mb-6 flex-col md:flex-row w-full">
-        <div className="flex w-full gap-2">
+        <div className="flex w-full gap-2 md:flex-row flex-col">
           <FormField
             control={form.control}
             name="dueDate"
             render={({ field }) => (
               <FormItem className="flex-none">
                 <Popover>
-                  <PopoverTrigger asChild>
+                  <PopoverTrigger asChild className="max-md:w-full">
                     <FormControl>
                       <Button
                         variant={"outline"}
@@ -141,7 +141,7 @@ export default function TaskForm({ onAddTask, activeCategory, setActiveCategory 
                     }
                   }}
                 >
-                  <SelectTrigger className="w-[130px]">
+                  <SelectTrigger className="w-[130px] max-md:w-full">
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
