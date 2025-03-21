@@ -142,7 +142,7 @@ export default function TaskForm({ onAddTask, activeCategory, setActiveCategory 
                   }}
                 >
                   <SelectTrigger className="w-[130px] max-md:w-full">
-                    <SelectValue placeholder="Select category" />
+                    <SelectValue placeholder="Category" />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((category) => (
@@ -153,7 +153,7 @@ export default function TaskForm({ onAddTask, activeCategory, setActiveCategory 
                         hidden={category === "all"}
                         className={category === "all" ? "text-muted-foreground" : ""}
                       >
-                        {category === "all" ? "Select category" : category}
+                        {category === "all" ? "Category" : category}
                       </SelectItem>
                     ))}
                   </SelectContent>
